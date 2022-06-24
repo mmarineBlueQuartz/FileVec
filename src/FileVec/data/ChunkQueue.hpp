@@ -4,37 +4,39 @@
 #include <optional>
 #include <stdexcept>
 
-#include "Block.hpp"
+#include "FileVec/data/Chunk.hpp"
 
 namespace File
 {
-template <typename TYPE, uint64_t SIZE, uint32_t MAX_BLOCK_COUNT>
-class BlockQueue
+template <typename TYPE, uint32_t MAX_BLOCK_COUNT>
+class ChunkQueue
 {
 public:
-  using block_type = Block<TYPE, SIZE>;
+  using chunk_type = Chunk<TYPE>;
+  using shape_type = typename chunk_type::shape_type;
 
   /**
    * @brief Constructs an empty BlockQueue.
    */
-  BlockQueue()
+  ChunkQueue()
+  : m_Blocks()
   {
   }
 
   /**
    * @brief Copy constructor deleted.
    */
-  BlockQueue(const BlockQueue& other) = delete;
+  ChunkQueue(const ChunkQueue& other) = delete;
 
   /**
    * @brief Move constructor
    */
-  BlockQueue(BlockQueue&& other) noexcept
+  ChunkQueue(ChunkQueue&& other) noexcept
   {
     m_Blocks = std::move(other.m_Blocks);
   }
 
-  virtual ~BlockQueue() = default;
+  virtual ~ChunkQueue() = default;
 
   /**
    * @brief Returns the number of items in the queue.
@@ -42,10 +44,6 @@ public:
    */
   uint32_t size() const
   {
-    if(m_End == MAX_BLOCK_COUNT)
-    {
-      return 0;
-    }
     if(m_Begin <= m_End)
     {
       return m_End - m_Begin;
@@ -57,7 +55,7 @@ public:
    * @brief Returns the maximum number of Blocks in the queue.
    * @return MAX_BLOCK_SIZE
    */
-  static constexpr uint32_t maxSize()
+  static uint32_t maxSize()
   {
     return MAX_BLOCK_COUNT;
   }
@@ -84,7 +82,7 @@ public:
    * @brief
    * @param block
    */
-  void insert(block_type&& block)
+  void insert(chunk_type&& block)
   {
     if(hasCapacity() == false)
     {
@@ -105,14 +103,14 @@ public:
    * @param rhs
    * @return
    */
-  BlockQueue& operator=(const BlockQueue& rhs) = delete;
+  ChunkQueue& operator=(const ChunkQueue& rhs) = delete;
 
   /**
    * @brief Move operator
    * @param rhs
    * @return
    */
-  BlockQueue& operator=(BlockQueue&& rhs) noexcept
+  ChunkQueue& operator=(ChunkQueue&& rhs) noexcept
   {
     m_Blocks = std::move(rhs.m_Blocks);
     return *this;
@@ -123,9 +121,9 @@ public:
    * @param targetBlock
    * @return
    */
-  bool contains(const block_type& targetBlock) const
+  bool contains(const chunk_type& targetBlock) const
   {
-    for(const block_type& block : m_Blocks)
+    for(const chunk_type& block : m_Blocks)
     {
       if(block == targetBlock)
       {
@@ -142,7 +140,7 @@ public:
    */
   bool contains(uint64_t offset) const
   {
-    for(const block_type& block : m_Blocks)
+    for(const chunk_type& block : m_Blocks)
     {
       if(offset >= block.offset() && offset < block.endOffset())
       {
@@ -152,9 +150,26 @@ public:
     return false;
   }
 
-  block_type& getBlockAtOffset(uint64_t offset)
+  /**
+   * @brief
+   * @param offset
+   * @return
+   */
+  bool contains(const shape_type& index) const
   {
-    for(block_type& block : m_Blocks)
+    for(const chunk_type& block : m_Blocks)
+    {
+      if(block.index() == index)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  chunk_type& getBlockAtOffset(uint64_t offset)
+  {
+    for(chunk_type& block : m_Blocks)
     {
       if(offset >= block.offset() && offset < block.endOffset())
       {
@@ -164,9 +179,9 @@ public:
     throw std::runtime_error("");
   }
 
-  const block_type& getBlockAtOffset(uint64_t offset) const
+  const chunk_type& getBlockAtOffset(uint64_t offset) const
   {
-    for(const block_type& block : m_Blocks)
+    for(const chunk_type& block : m_Blocks)
     {
       if(offset >= block.offset() && offset < block.endOffset())
       {
@@ -174,11 +189,36 @@ public:
       }
     }
     throw std::runtime_error("");
+  }
+
+  chunk_type& getBlockAtOffset(const shape_type& index)
+  {
+    for(chunk_type& block : m_Blocks)
+    {
+      // if(block.index() == index && block.isValid())
+      if(block.index() == index)
+      {
+        return block;
+      }
+    }
+    throw std::runtime_error("Chunk not found");
+  }
+
+  const chunk_type& getBlockAtOffset(const shape_type& index) const
+  {
+    for(const chunk_type& block : m_Blocks)
+    {
+      if(block.position() == index)
+      {
+        return block;
+      }
+    }
+    throw std::runtime_error("Chunk not found");
   }
 
 private:
-  std::array<block_type, MAX_BLOCK_COUNT> m_Blocks;
+  std::array<chunk_type, MAX_BLOCK_COUNT> m_Blocks;
   uint64_t m_Begin = 0;
-  uint64_t m_End = MAX_BLOCK_COUNT;
+  uint64_t m_End = 0;
 };
 } // namespace File

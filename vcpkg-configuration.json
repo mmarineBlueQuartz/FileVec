@@ -1,0 +1,16 @@
+{
+  "default-registry": null,
+  "registries": [
+    {
+      "kind": "git",
+      "repository": "https://github.com/BlueQuartzSoftware/complex-registry",
+      "packages": [
+        "catch2",
+        "nlohmann-json",
+        "vcpkg-cmake",
+        "vcpkg-cmake-config"
+      ],
+      "baseline": "680ce709abbea6c89f9e7c17dd4c21571e90b26c"
+    }
+  ]
+}

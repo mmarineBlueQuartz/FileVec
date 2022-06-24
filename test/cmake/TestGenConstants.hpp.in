@@ -1,0 +1,8 @@
+#pragma once
+
+#include <filesystem>
+
+namespace @PROJECT_NAME@::constants
+{
+const std::filesystem::path TestDataDir("@FileVec_TestDataDir@");
+}
