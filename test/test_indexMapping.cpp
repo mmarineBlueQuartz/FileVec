@@ -74,6 +74,76 @@ TEST_CASE("Find Chunk ID", "[Algorithms]")
   REQUIRE(File::util::FindChunkId(position, chunk) == targetPosition);
 }
 
+TEST_CASE("Find Chunk ID From index", "[Algorithms]")
+{
+  const shape_type shape = {4, 4};
+  const shape_type chunk = {2, 2};
+
+  index_type index = 0;
+  shape_type targetPosition = {0, 0};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 1;
+  targetPosition = {0, 0};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 2;
+  targetPosition = {1, 0};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 3;
+  targetPosition = {1, 0};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 4;
+  targetPosition = {0, 0};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 5;
+  targetPosition = {0, 0};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 6;
+  targetPosition = {1, 0};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 7;
+  targetPosition = {1, 0};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 8;
+  targetPosition = {0, 1};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 9;
+  targetPosition = {0, 1};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 10;
+  targetPosition = {1, 1};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 11;
+  targetPosition = {1, 1};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 12;
+  targetPosition = {0, 1};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 13;
+  targetPosition = {0, 1};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 14;
+  targetPosition = {1, 1};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+
+  index = 15;
+  targetPosition = {1, 1};
+  REQUIRE(File::util::FindChunkId(index, shape, chunk) == targetPosition);
+}
+
 TEST_CASE("Find Chunk Position From Position", "[Algorithms]")
 {
   const shape_type chunk = {2, 2};
@@ -85,10 +155,12 @@ TEST_CASE("Find Chunk Position From Position", "[Algorithms]")
 
   position = {1, 0};
   chunkId = {0, 0};
+  targetIndex = {1, 0};
   REQUIRE(File::util::FindChunkPosition(position, chunkId, chunk) == targetIndex);
 
   position = {2, 0};
   chunkId = {1, 0};
+  targetIndex = {0, 0};
   REQUIRE(File::util::FindChunkPosition(position, chunkId, chunk) == targetIndex);
 
   position = {3, 0};
@@ -112,7 +184,7 @@ TEST_CASE("Find Chunk Position From Position", "[Algorithms]")
   REQUIRE(File::util::FindChunkPosition(position, chunkId, chunk) == targetIndex);
 }
 
-TEST_CASE("Find Chunk Position From Index", "[Algorithms]")
+TEST_CASE("Find Chunk Index From Index", "[Algorithms]")
 {
   const shape_type shape = {4, 4};
   const shape_type chunk = {2, 2};
@@ -139,5 +211,29 @@ TEST_CASE("Find Chunk Position From Index", "[Algorithms]")
   REQUIRE(File::util::FindChunkIndex(index, shape, chunk) == 2);
 
   index = 7;
+  REQUIRE(File::util::FindChunkIndex(index, shape, chunk) == 3);
+
+  index = 8;
+  REQUIRE(File::util::FindChunkIndex(index, shape, chunk) == 0);
+
+  index = 9;
+  REQUIRE(File::util::FindChunkIndex(index, shape, chunk) == 1);
+
+  index = 10;
+  REQUIRE(File::util::FindChunkIndex(index, shape, chunk) == 0);
+
+  index = 11;
+  REQUIRE(File::util::FindChunkIndex(index, shape, chunk) == 1);
+
+  index = 12;
+  REQUIRE(File::util::FindChunkIndex(index, shape, chunk) == 2);
+
+  index = 13;
+  REQUIRE(File::util::FindChunkIndex(index, shape, chunk) == 3);
+
+  index = 14;
+  REQUIRE(File::util::FindChunkIndex(index, shape, chunk) == 2);
+
+  index = 15;
   REQUIRE(File::util::FindChunkIndex(index, shape, chunk) == 3);
 }

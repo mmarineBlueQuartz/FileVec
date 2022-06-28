@@ -84,6 +84,10 @@ public:
    */
   void insert(chunk_type&& block)
   {
+    if(contains(block))
+    {
+      return;
+    }
     if(hasCapacity() == false)
     {
       m_Begin = (m_Begin + 1) % MAX_BLOCK_COUNT;
@@ -92,10 +96,12 @@ public:
     {
       m_Blocks[m_Begin] = std::move(block);
       m_End++;
-      return;
     }
-    uint64_t index = (m_End + 1) % MAX_BLOCK_COUNT;
-    m_Blocks[index] = std::move(block);
+    else
+    {
+      uint64_t index = (m_End + 1) % MAX_BLOCK_COUNT;
+      m_Blocks[index] = std::move(block);
+    }
   }
 
   /**

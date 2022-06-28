@@ -339,7 +339,7 @@ public:
 
   static Array Create(const shape_type& shape, const shape_type& chunks, Order order = Order::ColumnMajor, Endian endian = Endian::irrelevant)
   {
-    std::filesystem::path path = File::Util::getTempDir();
+    std::filesystem::path path = File::Util::createTempPath();
     Header header = Header::Create(shape, chunks, File::ToDataType<T>(), order, endian);
     return Array(header, path);
   }
@@ -383,23 +383,6 @@ public:
    */
   virtual ~Array() = default;
 
-  shape_type index2position(index_type index) const
-  {
-    return util::FindPosition(index, header().shape());
-  }
-
-  shape_type position2chunkindex(const shape_type& position) const
-  {
-    const Header& hdr = header();
-    return util::FindChunkId(position, hdr.chunks());
-  }
-
-  shape_type findChunkPosition(const shape_type& position, const shape_type& chunkIndex) const
-  {
-    const Header& hdr = header();
-    return util::FindChunkPosition(position, chunkIndex, hdr.chunks());
-  }
-
   /**
    * @brief Returns a reference to the value at the target index.
    * @param index
@@ -440,11 +423,6 @@ public:
   reference operator[](index_type index)
   {
     chunk_type& block = getBlockAtIndex(index);
-
-    // const shape_type position = index2position(index);
-    // const shape_type chunkIndex = position2chunkindex(position);
-    // const shape_type chunkPosition = findChunkPosition(position, chunkIndex);
-    // const index_type offsetIndex = util::Flatten(chunkPosition, header().chunks());
     const index_type offsetIndex = util::FindChunkIndex(index, shape(), chunkShape());
     return block[offsetIndex];
   }
@@ -457,11 +435,7 @@ public:
   const_reference operator[](index_type index) const
   {
     const chunk_type& block = getBlockAtIndex(index);
-
-    const shape_type position = index2position(index);
-    const shape_type chunkIndex = position2chunkindex(position);
-    const shape_type offset = findChunkPosition(position, chunkIndex);
-    const index_type offsetIndex = util::Flatten(offset, header().chunks());
+    const index_type offsetIndex = util::FindChunkIndex(index, shape(), chunkShape());
     return block[offsetIndex];
   }
 
@@ -525,9 +499,6 @@ protected:
     return path() / positionStr;
   }
 
-  // void setSize(index_type newSize);
-  // void setMaxSize(index_type newSize);
-
   /**
    * @brief Returns a reference to the block containing the target index.
    * If no block is cached a new block is cached.
@@ -536,7 +507,7 @@ protected:
    */
   chunk_type& getBlockAtIndex(index_type index)
   {
-    const shape_type chunkIndex = index2position(index);
+    const shape_type chunkIndex = util::FindChunkId(index, shape(), chunkShape());
     return getBlockAtChunkIndex(chunkIndex);
   }
 
@@ -548,7 +519,7 @@ protected:
    */
   const chunk_type& getBlockAtIndex(index_type index) const
   {
-    const shape_type chunkIndex = index2position(index);
+    const shape_type chunkIndex = util::FindChunkPosition(index, shape(), chunkShape());
     return getBlockAtChunkIndex(chunkIndex);
   }
 

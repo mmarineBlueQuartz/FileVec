@@ -53,6 +53,7 @@ set(FILEVEC_HDRS
   ${FILEVEC_SOURCECODE_DIR}/data/Header.hpp
   ${FILEVEC_SOURCECODE_DIR}/data/TempDirectory.hpp
   ${FILEVEC_SOURCECODE_DIR}/util/Algorithm.hpp
+  ${FILEVEC_SOURCECODE_DIR}/util/Parsing.hpp
   ${FILEVEC_SOURCECODE_DIR}/util/PathUtil.hpp
   ${FILEVEC_SOURCECODE_DIR}/util/Storage.hpp
 )
@@ -65,6 +66,7 @@ set(FILEVEC_SRCS
   ${FILEVEC_SOURCECODE_DIR}/collection/IArray.cpp
   ${FILEVEC_SOURCECODE_DIR}/data/Header.cpp
   ${FILEVEC_SOURCECODE_DIR}/data/TempDirectory.cpp
+  ${FILEVEC_SOURCECODE_DIR}/util/Parsing.cpp
   ${FILEVEC_SOURCECODE_DIR}/util/PathUtil.cpp
   ${FILEVEC_SOURCECODE_DIR}/util/Storage.cpp
 )

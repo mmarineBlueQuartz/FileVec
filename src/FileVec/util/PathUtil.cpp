@@ -7,15 +7,13 @@
 
 std::filesystem::path File::Util::getTempDir()
 {
-  static TempDirectory tempDirectory(createTempPath());
+  static TempDirectory tempDirectory(defaultTempPath());
   return tempDirectory.path();
 }
 
-std::filesystem::path File::Util::createTempPath()
+std::filesystem::path File::Util::defaultTempPath()
 {
-  static uint16_t dataIndex = 0;
-  const std::string dataName = std::to_string(dataIndex++);
-  std::filesystem::path targetPath = std::filesystem::temp_directory_path() / dataName;
+  std::filesystem::path targetPath = std::filesystem::temp_directory_path() / "FileCore";
 
   if(std::filesystem::exists(targetPath) || std::filesystem::create_directory(targetPath))
   {
@@ -24,13 +22,20 @@ std::filesystem::path File::Util::createTempPath()
   targetPath = std::filesystem::current_path() / "temp";
   if(std::filesystem::exists(targetPath) || std::filesystem::create_directory(targetPath))
   {
-    targetPath /= dataName;
-    if(std::filesystem::exists(targetPath) || std::filesystem::create_directory(targetPath))
-    {
-      return targetPath;
-    }
+    return targetPath;
   }
   return {};
+}
+
+std::filesystem::path File::Util::createTempPath()
+{
+  static uint16_t dataIndex = 0;
+
+  const std::string dataName = std::to_string(dataIndex++);
+  std::filesystem::path targetPath = getTempDir() / dataName;
+  std::filesystem::create_directory(targetPath);
+
+  return targetPath;
 }
 
 std::filesystem::path File::Util::chunkPath(const std::filesystem::path& directory, const std::vector<uint64_t>& position)
@@ -61,6 +66,10 @@ bool createDataChunksRecursive(const std::filesystem::path& directory, std::vect
   {
     numChunks[index] = i;
     const std::filesystem::path path = File::Util::chunkPath(directory, numChunks);
+    if(std::filesystem::exists(path))
+    {
+      continue;
+    }
     if(!std::ofstream(path, std::ofstream::out | std::ofstream::app))
     {
       return false;

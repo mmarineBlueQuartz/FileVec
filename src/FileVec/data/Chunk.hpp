@@ -67,6 +67,7 @@ public:
   : m_Path(other.m_Path)
   , m_Size(other.m_Size)
   , m_Data(other.m_Data)
+  , m_FillValue(other.m_FillValue)
   , m_Index(other.m_Index)
   , m_DataSize(other.m_DataSize)
   {
@@ -80,6 +81,7 @@ public:
   : m_Path(std::move(other.m_Path))
   , m_Size(other.m_Size)
   , m_Data(std::move(other.m_Data))
+  , m_FillValue(other.m_FillValue)
   , m_Index(std::move(other.m_Index))
   , m_DataSize(other.m_DataSize)
   {
@@ -117,6 +119,13 @@ public:
    */
   reference operator[](uint64_t index)
   {
+    if(index >= m_Size)
+    {
+      std::stringstream ss;
+      ss << "Chunk Index (" << index << ") is out of range";
+      throw std::out_of_range(ss.str());
+    }
+
     return m_Data[index];
   }
 
@@ -127,6 +136,13 @@ public:
    */
   const_reference operator[](uint64_t index) const
   {
+    if(index >= m_Size)
+    {
+      std::stringstream ss;
+      ss << "Chunk Index (" << index << ") is out of range";
+      throw std::out_of_range(ss.str());
+    }
+
     return m_Data[index];
   }
 
@@ -144,12 +160,13 @@ public:
     std::basic_ofstream<data_type> ostream(m_Path, std::ios::out | std::ios::binary | std::ios::trunc);
     ostream.seekp(0);
     ostream.write(m_Data.data(), m_Data.size());
-    // std::ofstream ostream(m_Path, std::fstream::out | std::fstream::trunc | std::fstream::binary);
-    // ostream.write(reinterpret_cast<char*>(m_Data.data()), m_DataSize);
     ostream.flush();
     ostream.close();
   }
 
+  /**
+   *
+   */
   void parseIndexFromPath()
   {
     std::string filename = m_Path.filename().string();
@@ -181,43 +198,10 @@ public:
 
     using stream_iterator = std::istreambuf_iterator<data_type>;
 
-    m_Data.clear();
-
-    std::ifstream is;
-
-    is.open(m_Path, std::ios::binary);
-    is.seekg(0, std::ios::end);
-    size_t filesize = is.tellg();
-    is.seekg(0, std::ios::beg);
-
-    m_Data.resize(filesize / sizeof(data_type));
-
-    is.read((char*)m_Data.data(), filesize);
-
-#if 1
-    // std::basic_ifstream<data_type> stream(m_Path, std::ios::in | std::ios::binary | std::ios::app);
-    // std::basic_ifstream<data_type> stream(m_Path, std::ios::in | std::ios::binary);
-    // store_type data((stream_iterator(stream)), stream_iterator());
-    // m_Data = data;
-#else
-    std::ifstream stream(m_Path, std::ios::binary);
-    stream.seekg(0, std::ios::end);
-    size_t file_size_in_byte = stream.tellg();
-    std::vector<char> data; // used to store text data
-    data.resize(file_size_in_byte);
+    std::basic_ifstream<data_type> stream(m_Path, std::ios::in | std::ios::binary);
     stream.seekg(0, std::ios::beg);
-    stream.read(data.data(), file_size_in_byte);
-
-    const uint64_t count = file_size_in_byte / sizeof(data_type);
-    m_Data.resize(count);
-    data_type* dataPtr = reinterpret_cast<data_type*>(data.data());
-    for(uint64_t i = 0; i < count; i++)
-    {
-      m_Data[i] = dataPtr[i];
-    }
-#endif
-
-    is.close();
+    stream.read(m_Data.data(), m_Size);
+    stream.close();
   }
 
   const shape_type& index() const
@@ -234,8 +218,10 @@ public:
 
     m_Path = rhs.m_Path;
     m_Data = rhs.m_Data;
+    m_FillValue = rhs.m_FillValue;
     m_Index = rhs.m_Index;
     m_DataSize = rhs.m_DataSize;
+    m_Size = rhs.m_Size;
 
     return *this;
   }
@@ -251,8 +237,10 @@ public:
 
     m_Path = std::move(rhs.m_Path);
     m_Data = std::move(rhs.m_Data);
+    m_FillValue = rhs.m_FillValue;
     m_Index = std::move(rhs.m_Index);
     m_DataSize = rhs.m_DataSize;
+    m_Size = rhs.m_Size;
 
     return *this;
   }

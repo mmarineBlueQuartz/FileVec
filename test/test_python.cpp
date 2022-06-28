@@ -7,7 +7,7 @@
 
 #include "FileVec/TestGenConstants.hpp"
 
-#define PRINTSTREAM 0
+#define PRINTSTREAM
 
 TEST_CASE("Read Python-Generated Array", "[Python]")
 {
@@ -28,18 +28,19 @@ TEST_CASE("Read Python-Generated Array", "[Python]")
   REQUIRE(array.chunkSize() == 4);
 
   REQUIRE(array.chunkShape() == std::vector<uint64_t>{2, 2});
-  std::cout << "Size: " << maxSize << std::endl;
-  std::cout << "Chunk Size: " << array.chunkSize() << std::endl;
 
-#if PRINTSTREAM
+#ifdef PRINTSTREAM
+  std::cout << "Size: " << maxSize << std::endl;
   for(int64_t i = 0; i < array.size(); i++)
   {
     std::cout << std::to_string(i) << ": " << std::to_string(array[i]) << std::endl;
   }
 
+  std::cout << std::endl;
   auto chunkPath = path / "0.0";
+  std::cout << "Chunk Size: " << array.chunkSize() << std::endl;
 
-  File::Chunk<int32_t> chunk(chunkPath, 16);
+  File::Chunk<int32_t> chunk(chunkPath, 4, 3);
   for(int64_t i = 0; i < chunk.size(); i++)
   {
     std::cout << std::to_string(i) << ": " << std::to_string(chunk[i]) << std::endl;
