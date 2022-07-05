@@ -1,0 +1,23 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "filevec",
+  "version": "0.1.0",
+  "dependencies": [
+    {
+      "name": "nlohmann-json"
+    },
+    {
+      "name": "blosc"
+    }
+  ],
+  "features": {
+    "tests": {
+      "description": "Tests",
+      "dependencies": [
+        {
+          "name": "catch2"
+        }
+      ]
+    }
+  }
+}
