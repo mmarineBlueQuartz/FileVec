@@ -48,8 +48,10 @@ generate_export_header(FileVec
 )
 
 set(FILEVEC_HDRS
-  ${FILEVEC_SOURCECODE_DIR}/collection/IArray.hpp
+  ${FILEVEC_SOURCECODE_DIR}/collection/BaseCollection.hpp
   ${FILEVEC_SOURCECODE_DIR}/collection/Array.hpp
+  ${FILEVEC_SOURCECODE_DIR}/collection/Group.hpp
+  ${FILEVEC_SOURCECODE_DIR}/collection/IArray.hpp
   ${FILEVEC_SOURCECODE_DIR}/data/Chunk.hpp
   ${FILEVEC_SOURCECODE_DIR}/data/ChunkQueue.hpp
   ${FILEVEC_SOURCECODE_DIR}/data/Header.hpp
@@ -70,6 +72,8 @@ set(FILEVEC_GENERATED_HEADERS
 )
 
 set(FILEVEC_SRCS
+  ${FILEVEC_SOURCECODE_DIR}/collection/BaseCollection.cpp
+  ${FILEVEC_SOURCECODE_DIR}/collection/Group.cpp
   ${FILEVEC_SOURCECODE_DIR}/collection/IArray.cpp
   ${FILEVEC_SOURCECODE_DIR}/data/Header.cpp
   ${FILEVEC_SOURCECODE_DIR}/data/TempDirectory.cpp

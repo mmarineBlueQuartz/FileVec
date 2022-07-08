@@ -47,26 +47,22 @@ IArray::pointer IArray::Read(const std::filesystem::path& path)
 }
 
 IArray::IArray(std::filesystem::path directory)
-: m_Header(Header::Import(directory / Header::FileName()))
-, m_DirectoryPath(std::move(directory))
+: BaseCollection(directory)
+, m_Header(Header::Import(directory / Header::FileName()))
 {
 }
 
 IArray::IArray(const Header& header, std::filesystem::path directory)
-: m_Header(header)
-, m_DirectoryPath(std::move(directory))
+: BaseCollection(std::move(directory))
+, m_Header(header)
 {
 }
 
-IArray::IArray(const IArray& other)
-: m_Header(other.m_Header)
-, m_DirectoryPath(other.m_DirectoryPath)
-{
-}
+IArray::IArray(const IArray& other) = default;
 
 IArray::IArray(IArray&& other) noexcept
-: m_Header(std::move(other.m_Header))
-, m_DirectoryPath(std::move(other.m_DirectoryPath))
+: BaseCollection(other)
+, m_Header(std::move(other.m_Header))
 {
 }
 
@@ -74,15 +70,15 @@ IArray::~IArray() = default;
 
 IArray& IArray::operator=(const IArray& rhs)
 {
+  BaseCollection::operator=(rhs);
   m_Header = rhs.m_Header;
-  m_DirectoryPath = rhs.m_DirectoryPath;
   return *this;
 }
 
 IArray& IArray::operator=(IArray&& rhs) noexcept
 {
+  BaseCollection::operator=(rhs);
   m_Header = std::move(rhs.m_Header);
-  m_DirectoryPath = std::move(rhs.m_DirectoryPath);
   return *this;
 }
 
@@ -118,11 +114,6 @@ const Header& IArray::header() const
 
 std::filesystem::path IArray::headerPath() const
 {
-  return HeaderPath(m_DirectoryPath);
-}
-
-const std::filesystem::path& IArray::path() const
-{
-  return m_DirectoryPath;
+  return HeaderPath(path());
 }
 } // namespace File

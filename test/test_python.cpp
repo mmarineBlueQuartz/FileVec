@@ -1,6 +1,7 @@
 #include <catch2/catch.hpp>
 
 #include "FileVec/collection/Array.hpp"
+#include "FileVec/collection/Group.hpp"
 
 #include <filesystem>
 #include <iostream>
@@ -73,4 +74,15 @@ TEST_CASE("Read Python-Generated Array", "[Python]")
 {
   testArrayAtPath(FileVec::constants::TestDataDir / "group" / "compressionless.zarr");
   testArrayAtPath(FileVec::constants::TestDataDir / "group" / "blosc.zarr");
+}
+
+TEST_CASE("Read Python - Generated Group", "[Python]")
+{
+  auto groupPtr = File::Group::Read(FileVec::constants::TestDataDir / "group");
+  REQUIRE(groupPtr != nullptr);
+  REQUIRE(groupPtr->find("compressionless.zarr") != groupPtr->end());
+  REQUIRE(groupPtr->find("blosc.zarr") != groupPtr->end());
+
+  testArrayAtPath(groupPtr->find("compressionless.zarr")->get()->path());
+  testArrayAtPath(groupPtr->find("blosc.zarr")->get()->path());
 }

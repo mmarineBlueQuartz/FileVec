@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <vector>
 
+#include "FileVec/collection/BaseCollection.hpp"
 #include "FileVec/data/Header.hpp"
 
 namespace File
@@ -16,7 +17,7 @@ namespace File
  * target filepath. No information about the underlying data type is required
  * to load the Array.
  */
-class FILEVEC_EXPORT IArray
+class FILEVEC_EXPORT IArray : public BaseCollection
 {
 public:
   using index_type = uint64_t;
@@ -100,12 +101,6 @@ public:
    */
   std::filesystem::path headerPath() const;
 
-  /**
-   * @brief Returns the path to the directory backing the array.
-   * @return Directory filepath
-   */
-  const std::filesystem::path& path() const;
-
   IArray& operator=(const IArray& rhs);
   IArray& operator=(IArray&& rhs) noexcept;
 
@@ -127,6 +122,5 @@ protected:
 
 private:
   Header m_Header;
-  std::filesystem::path m_DirectoryPath;
 };
 } // namespace File
