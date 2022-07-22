@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include <catch2/catch.hpp>
+#include "catch.hpp"
 
 TEST_CASE("Read Python Header", "[Headers]")
 {

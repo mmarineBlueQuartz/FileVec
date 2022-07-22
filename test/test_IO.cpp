@@ -1,10 +1,9 @@
-#include <string>
-
-#include <catch2/catch.hpp>
-
-#include <iostream>
+#include "catch.hpp"
 
 #include "FileVec/collection/Array.hpp"
+
+#include <iostream>
+#include <string>
 
 template <typename T>
 void testArrayOps(File::Array<T>& vector, T multiplier)

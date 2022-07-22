@@ -36,7 +36,8 @@ enum class FILEVEC_EXPORT Endian : uint8_t
 enum class FILEVEC_EXPORT Order : uint8_t
 {
   RowMajor = 0,
-  ColumnMajor
+  ColumnMajor,
+  Default = ColumnMajor
 };
 
 class ICompressor;
@@ -91,7 +92,7 @@ private:
   shape_type m_Chunks;
   std::any m_FillValue;
   Endian m_Endian = Endian::big;
-  Order m_Order = Order::RowMajor;
+  Order m_Order = Order::Default;
   DataType m_DataType = DataType::int32;
   std::shared_ptr<ICompressor> m_Compressor = nullptr;
 };

@@ -7,7 +7,7 @@ add_executable(FileVec_test)
 target_link_libraries(FileVec_test
   PRIVATE
   FileVec
-  Catch2::Catch2
+  Catch2::Catch2WithMain
 )
 
 set_target_properties(FileVec_test
@@ -29,8 +29,8 @@ set(TEST_SOURCE_DIR "${FileVec_SOURCE_DIR}/test")
 set(FileVec_TestDataDir "${FileVec_BINARY_DIR}/test")
 
 set(configured_filepath ${FileVec_BINARY_DIR}/generated/FileVec/TestGenConstants.hpp)
-configure_file(${CMAKE_CURRENT_LIST_DIR}/cmake/TestGenConstants.hpp.in
-  ${FileVec_BINARY_DIR}/generated/FileVec/TestGenConstants.hpp
+configure_file("${CMAKE_CURRENT_LIST_DIR}/cmake/TestGenConstants.hpp.in"
+  "${FileVec_BINARY_DIR}/generated/FileVec/TestGenConstants.hpp"
 )
 
 target_sources(FileVec_test
@@ -48,7 +48,7 @@ target_sources(FileVec_test
 add_custom_command(TARGET FileVec_test PRE_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory
 
-  ${CMAKE_SOURCE_DIR}/test/data "${FileVec_TestDataDir}")
+  "${CMAKE_SOURCE_DIR}/test/data" "${FileVec_TestDataDir}")
 
 # ${CMAKE_SOURCE_DIR}/test/data $<TARGET_FILE_DIR:FileVec_test>)
 target_include_directories(FileVec_test PRIVATE ${FileVec_GENERATED_DIR})

@@ -372,7 +372,7 @@ public:
    * or little endian or if it is unknown in which case it uses the system default.
    * @return Temporary Array
    */
-  static Array Create(const shape_type& shape, const shape_type& chunks, Order order = Order::ColumnMajor, std::any fillValue = 0, Endian endian = Endian::irrelevant)
+  static Array Create(const shape_type& shape, const shape_type& chunks, Order order = Order::Default, std::any fillValue = 0, Endian endian = Endian::irrelevant)
   {
     std::filesystem::path path = File::Util::createTempPath();
     Header header = Header::Create(shape, chunks, File::ToDataType<T>(), order, endian, fillValue);
@@ -489,7 +489,7 @@ public:
   reference operator[](index_type index)
   {
     chunk_type& block = getBlockAtIndex(index);
-    const index_type offsetIndex = util::FindChunkIndex(index, shape(), chunkShape());
+    const index_type offsetIndex = util::FindChunkIndex(index, shape(), chunkShape(), header().order());
     return block[offsetIndex];
   }
 
@@ -501,7 +501,7 @@ public:
   const_reference operator[](index_type index) const
   {
     const chunk_type& block = getBlockAtIndex(index);
-    const index_type offsetIndex = util::FindChunkIndex(index, shape(), chunkShape());
+    const index_type offsetIndex = util::FindChunkIndex(index, shape(), chunkShape(), header().order());
     return block[offsetIndex];
   }
 
@@ -612,7 +612,7 @@ protected:
    */
   chunk_type& getBlockAtIndex(index_type index)
   {
-    const shape_type chunkIndex = util::FindChunkId(index, shape(), chunkShape());
+    const shape_type chunkIndex = util::FindChunkId(index, shape(), chunkShape(), header().order());
     return getBlockAtChunkIndex(chunkIndex);
   }
 

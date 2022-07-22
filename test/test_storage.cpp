@@ -1,16 +1,17 @@
-#include <catch2/catch.hpp>
+#include "catch.hpp"
 
 #include "FileVec/collection/Array.hpp"
 #include "FileVec/util/Storage.hpp"
 
+#include <cstdio>
 #include <iostream>
 
 TEST_CASE("Check Storage", "[Storage]")
 {
   const auto data = File::Storage::checkStorage();
-  std::printf("Total Memory: %u\n", data.total);
-  std::printf("Free Memory:  %u\n", data.free);
-  // std::printf("Available Memory:  %u\n", data.available);
+  std::printf("Total Memory: %llu\n", data.total);
+  std::printf("Free Memory:  %llu\n", data.free);
+  // std::printf("Available Memory:  %llu\n", data.available);
 }
 
 #if 0

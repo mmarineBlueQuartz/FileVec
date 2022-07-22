@@ -29,7 +29,7 @@ public:
    */
   data_vector decompressData(const byte_vector& bytes, const Header& header) const override
   {
-    return FromByteVector(bytes, header);
+    return AbstractCompressor<T>::FromByteVector(bytes, header);
   }
 
   /**

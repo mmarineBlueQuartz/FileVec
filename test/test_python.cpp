@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include "catch.hpp"
 
 #include "FileVec/collection/Array.hpp"
 #include "FileVec/collection/Group.hpp"
@@ -65,12 +65,21 @@ void testArrayAtPath(const std::filesystem::path& arrayPath)
   REQUIRE(array[1] == 5);
   REQUIRE(array[6] == 6);
 
-  REQUIRE(chunk[0] == 2);
-  REQUIRE(chunk[1] == 5);
-  REQUIRE(chunk[2] == 6);
+  if(array.header().order() == File::Order::ColumnMajor)
+  {
+    REQUIRE(chunk[0] == 2);
+    REQUIRE(chunk[1] == 5);
+    REQUIRE(chunk[2] == 6);
+  }
+  else
+  {
+    REQUIRE(chunk[0] == 2);
+    REQUIRE(chunk[1] == 6);
+    REQUIRE(chunk[2] == 5);
+  }
 }
 
-TEST_CASE("Read Python-Generated Array", "[Python]")
+TEST_CASE("Read Array w/ Compression", "[Python]")
 {
   testArrayAtPath(FileVec::constants::TestDataDir / "group" / "compressionless.zarr");
   testArrayAtPath(FileVec::constants::TestDataDir / "group" / "blosc.zarr");
@@ -85,4 +94,9 @@ TEST_CASE("Read Python - Generated Group", "[Python]")
 
   testArrayAtPath(groupPtr->find("compressionless.zarr")->get()->path());
   testArrayAtPath(groupPtr->find("blosc.zarr")->get()->path());
+}
+
+TEST_CASE("Read Row-Major Order Array", "[Python]")
+{
+  testArrayAtPath(FileVec::constants::TestDataDir / "group" / "order-F.zarr");
 }

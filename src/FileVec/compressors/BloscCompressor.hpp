@@ -80,7 +80,7 @@ public:
     }
     blosc_destroy();
 
-    return FromByteVector(decompressed, header);
+    return AbstractCompressor<T>::FromByteVector(decompressed, header);
   }
 
   byte_vector compressData(const data_vector& data, const Header& header) const override
