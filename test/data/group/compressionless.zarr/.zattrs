@@ -1,0 +1,6 @@
+{
+    "name": "foo",
+    "true": false,
+    "type": "int32",
+    "value": 5
+}

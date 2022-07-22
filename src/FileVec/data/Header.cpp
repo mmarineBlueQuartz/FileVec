@@ -200,15 +200,13 @@ Header Header::Create(const shape_type& shape, const shape_type& chunks, DataTyp
 
 Header Header::Import(const std::filesystem::path& path)
 {
-  // const std::filesystem::path path = headerPath();
   if(exists(path) == false)
   {
     return {};
   }
 
   std::ifstream ifstream(path);
-  const nlohmann::json json = nlohmann::json::parse(ifstream);
-  return FromJson(json);
+  return FromJson(nlohmann::json::parse(ifstream));
 }
 
 Header Header::FromJson(const nlohmann::json& json)

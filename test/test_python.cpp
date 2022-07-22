@@ -33,14 +33,19 @@ void printChunk(const File::Chunk<T>& chunk)
 }
 } // namespace debugging
 
-void testArrayAtPath(const std::filesystem::path& arrayPath)
+File::IArray::pointer getArrayPtr(const std::filesystem::path& arrayPath)
 {
   REQUIRE(std::filesystem::exists(arrayPath));
 #ifdef PRINTSTREAM
   std::cout << "Data Path: " << arrayPath.string() << std::endl;
 #endif
 
-  auto iArrayPtr = File::IArray::Read(arrayPath);
+  return File::IArray::Read(arrayPath);
+}
+
+void testArrayAtPath(const std::filesystem::path& arrayPath)
+{
+  auto iArrayPtr = getArrayPtr(arrayPath);
   REQUIRE(iArrayPtr != nullptr);
 
   File::Array<int32_t>* arrayPtr = dynamic_cast<File::Array<int32_t>*>(iArrayPtr.get());
@@ -77,6 +82,18 @@ void testArrayAtPath(const std::filesystem::path& arrayPath)
     REQUIRE(chunk[1] == 6);
     REQUIRE(chunk[2] == 5);
   }
+}
+
+TEST_CASE("Read Attributes", "[Python]")
+{
+  const auto arrayPtr = getArrayPtr(FileVec::constants::TestDataDir / "group" / "compressionless.zarr");
+  const auto& attr = arrayPtr->attributes();
+  REQUIRE(attr.size() == 4);
+
+  REQUIRE(attr["name"] == "foo");
+  REQUIRE(attr["type"] == "int32");
+  REQUIRE(attr["value"] == 5);
+  REQUIRE(attr["true"] == false);
 }
 
 TEST_CASE("Read Array w/ Compression", "[Python]")
